@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('./assets/fonts/Montserrat-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Better';
+  src: url('./assets/fonts/Better-Together.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('./assets/fonts/Montserrat-SemiBold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@layer base {
+  html {
+    font-family: 'Montserrat';
+    font-weight: normal;
+  }
+  h3 {
+    font-family: "Montserrat";
+    font-weight: bold;
+    font-size: 2em;
+    color: theme('colors.brown')
+  }
+  h4 {
+    font-family: "Montserrat";
+    font-weight: bolder;
+    font-size: 1.5em;
+    color: theme('colors.brown')
+  }
+}
+
+@layer utilities {
+  ::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #696969; 
+    border-radius: 3px; 
+  }
+
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: theme('colors.cream');
+}

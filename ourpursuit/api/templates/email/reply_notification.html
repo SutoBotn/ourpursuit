@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Reply Notification</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #EEE0CB; color: #523A34; margin: 0; padding: 0; padding-top:10px; padding-bottom:10px;">
+    <table style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #FFFFFF; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <tr>
+            <td>
+                <h1 style="color: #BD632F; margin-bottom: 10px;">Hey {{ username }},</h1>
+                <p style="margin-bottom: 20px;">Just wanted to give you a heads up that someone replied to your post titled "<strong>{{ post_title }}</strong>". Here's a quick overview:</p>
+                <ul>
+                    <li><strong>Post Title:</strong> {{ post_title }}</li>
+                    <li><strong>Reply Author:</strong> {{ reply_author }}</li>
+                    <li><strong>Reply Content:</strong> {{ reply_content }}</li>
+                </ul>
+                <p style="margin-bottom: 20px;">To see the full post and the reply, click the button below:</p>
+                <a href={{ link_to_post }} style="display: inline-block; padding: 10px 20px; background-color: #D8973C; color: #FFFFFF; text-decoration: none; border-radius: 5px; margin-bottom: 20px;">View Post</a>
+                <p style="margin-bottom: 0;">Thanks for being part of our community!</p>
+                <p style="margin-bottom: 0;">Cheers,<br>Our Pursuit</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
