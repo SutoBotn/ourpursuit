@@ -42,7 +42,7 @@ const AskShare = () => {
       }
     }
     if (editPost) {
-      if (editPost.type == "Question") {
+      if (editPost.type === "Question") {
         setPostType("Q")
       } else {
         setPostType("A")

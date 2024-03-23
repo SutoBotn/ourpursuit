@@ -300,44 +300,41 @@ def get_user_posts(request):
 def create_post(request):
     if request.method == 'POST':
         user = request.user
-        if user.is_authenticated:
-            form = PostForm(request.POST, request.FILES)
-            if form.is_valid():
-                post_text = form.cleaned_data['title'] + ' ' + form.cleaned_data['body']
-                
-                if predict_hate_speech(post_text, trained_model, vectorizer) == 0:
-                    return JsonResponse({'error': 'Post contains hate speech'}, status=400)
-                elif predict_hate_speech(post_text, trained_model, vectorizer) == 1:
-                    return JsonResponse({'error': 'Post contains offensive language'}, status=400)
-                else:
-                    print('no profanity')
-
-                # if contains_profanity(post_text, trained_model, vectorizer):
-                #     return JsonResponse({'error': 'Post contains profanity'}, status=400)
-                # else:
-                #     print('no profanity')
-                
-                new_post = Post(
-                    writer=user,
-                    title=form.cleaned_data['title'],
-                    category=form.cleaned_data['category'],
-                    post_type=form.cleaned_data['post_type'],
-                    body=form.cleaned_data['body']
-                )
-
-                # Handle image upload
-                image = request.FILES.get('image')
-                if image:
-                    fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'posts'))
-                    filename = fs.save(image.name, image)
-                    new_post.image = 'posts/' + filename
-
-                new_post.save()
-                return JsonResponse({'message': 'Post created successfully', 'post_id': new_post.id, 'category': new_post.category.name})
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post_text = form.cleaned_data['title'] + ' ' + form.cleaned_data['body']
+            
+            if predict_hate_speech(post_text, trained_model, vectorizer) == 0:
+                return JsonResponse({'error': 'Post contains hate speech'}, status=400)
+            elif predict_hate_speech(post_text, trained_model, vectorizer) == 1:
+                return JsonResponse({'error': 'Post contains offensive language'}, status=400)
             else:
-                return JsonResponse({'error': 'All fields need to be filled'}, status=400)
+                print('no profanity')
+
+            # if contains_profanity(post_text, trained_model, vectorizer):
+            #     return JsonResponse({'error': 'Post contains profanity'}, status=400)
+            # else:
+            #     print('no profanity')
+            
+            new_post = Post(
+                writer=user,
+                title=form.cleaned_data['title'],
+                category=form.cleaned_data['category'],
+                post_type=form.cleaned_data['post_type'],
+                body=form.cleaned_data['body']
+            )
+
+            # Handle image upload
+            image = request.FILES.get('image')
+            if image:
+                fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'posts'))
+                filename = fs.save(image.name, image)
+                new_post.image = 'posts/' + filename
+
+            new_post.save()
+            return JsonResponse({'message': 'Post created successfully', 'post_id': new_post.id, 'category': new_post.category.name})
         else:
-            return JsonResponse({'error': 'You must be logged in to post'}, status=401)
+            return JsonResponse({'error': 'All fields need to be filled'}, status=400)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
@@ -346,60 +343,57 @@ def create_post(request):
 def edit_post(request, post_id):
     if request.method == 'POST':
         user = request.user
-        if user.is_authenticated:
-            form = PostForm(request.POST, request.FILES)
-            post = Post.objects.get(id=post_id)
-            if post.writer == request.user:
-                if form.is_valid():
-                    post_text = form.cleaned_data['title'] + ' ' + form.cleaned_data['body']
-                    if predict_hate_speech(post_text, trained_model, vectorizer) == 0:
-                        return JsonResponse({'error': 'Post contains hate speech'}, status=400)
-                    if predict_hate_speech(post_text, trained_model, vectorizer) == 1:
-                        return JsonResponse({'error': 'Post contains offensive language'}, status=400)
+        form = PostForm(request.POST, request.FILES)
+        post = Post.objects.get(id=post_id)
+        if post.writer == request.user:
+            if form.is_valid():
+                post_text = form.cleaned_data['title'] + ' ' + form.cleaned_data['body']
+                if predict_hate_speech(post_text, trained_model, vectorizer) == 0:
+                    return JsonResponse({'error': 'Post contains hate speech'}, status=400)
+                if predict_hate_speech(post_text, trained_model, vectorizer) == 1:
+                    return JsonResponse({'error': 'Post contains offensive language'}, status=400)
 
-                    post.writer = user
-                    post.title = form.cleaned_data['title']
-                    post.body=form.cleaned_data['body']
-                    
-                    # Handle image upload
-                    image = request.FILES.get('image')
-                    if image:
-                        # Delete previous image if exists
-                        if post.image:
-                            # Delete previous image file
-                            if os.path.isfile(post.image.path):
-                                os.remove(post.image.path)
-                            # Clear previous image reference
-                            post.image = None
-                        # Save new image
-                        fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'posts'))
-                        filename = fs.save(image.name, image)
-                        post.image = 'posts/' + filename
+                post.writer = user
+                post.title = form.cleaned_data['title']
+                post.body=form.cleaned_data['body']
+                
+                # Handle image upload
+                image = request.FILES.get('image')
+                if image:
+                    # Delete previous image if exists
+                    if post.image:
+                        # Delete previous image file
+                        if os.path.isfile(post.image.path):
+                            os.remove(post.image.path)
+                        # Clear previous image reference
+                        post.image = None
+                    # Save new image
+                    fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'posts'))
+                    filename = fs.save(image.name, image)
+                    post.image = 'posts/' + filename
 
-                    category_instance = form.cleaned_data['category']
-                    print(category_instance)  # Check if it's a single instance
-                    post_type_instance=form.cleaned_data['post_type']
-                    print(post_type_instance)
+                category_instance = form.cleaned_data['category']
+                print(category_instance)  # Check if it's a single instance
+                post_type_instance=form.cleaned_data['post_type']
+                print(post_type_instance)
 
 
-                    if isinstance(category_instance, Category):
-                        if post_type_instance == 'Q' or post_type_instance == 'A':
-                            post.category = category_instance
-                            post.post_type = post_type_instance
-                            post.save()
-                            return JsonResponse({'message': 'Post updated successfully', 'post_id': post.id, 'category': post.category.name})
-                        else:
-                            return JsonResponse({'error': 'Invalid post type instance'}, status=400)
+                if isinstance(category_instance, Category):
+                    if post_type_instance == 'Q' or post_type_instance == 'A':
+                        post.category = category_instance
+                        post.post_type = post_type_instance
+                        post.save()
+                        return JsonResponse({'message': 'Post updated successfully', 'post_id': post.id, 'category': post.category.name})
                     else:
-                        # Handle the case where the category_instance is not an instance of Category
-                        return JsonResponse({'error': 'Invalid category instance'}, status=400)
+                        return JsonResponse({'error': 'Invalid post type instance'}, status=400)
                 else:
-                    return JsonResponse({'errors': form.errors}, status=400)
-                    # return JsonResponse({'error': 'All fields need to be filled'}, status=400)
+                    # Handle the case where the category_instance is not an instance of Category
+                    return JsonResponse({'error': 'Invalid category instance'}, status=400)
             else:
-                return JsonResponse({'error': 'You can only edit your own posts'}, status=403)
+                return JsonResponse({'errors': form.errors}, status=400)
+                # return JsonResponse({'error': 'All fields need to be filled'}, status=400)
         else:
-            return JsonResponse({'error': 'You must be logged in to edit posts'}, status=403)
+            return JsonResponse({'error': 'You can only edit your own posts'}, status=403)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
