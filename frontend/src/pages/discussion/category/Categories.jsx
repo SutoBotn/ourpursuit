@@ -12,7 +12,7 @@ const CategoriesPage = () => {
     const fetchCategories = async () => {
       try {
         // const response = await axios.get('http://localhost:8000/api/get-categories/');
-        const response = await axios.get('https://ourpursuit-7f3fda83b565.herokuapp.com/api/get-categories/');
+        const response = await axios.get('https://our-pursuit-418201.nw.r.appspot.com/api/get-categories/');
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error)

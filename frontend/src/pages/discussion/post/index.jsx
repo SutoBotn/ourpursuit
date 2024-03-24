@@ -23,7 +23,7 @@ const Post = () => {
     const fetchPost = async () => {
       try {
         // const response = await axios.get(`http://localhost:8000/api/posts/${category}/${id}`)
-        const response = await axios.get(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/posts/${category}/${id}`)
+        const response = await axios.get(`https://our-pursuit-418201.nw.r.appspot.com/api/posts/${category}/${id}`)
         setPostData(response.data)
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -31,7 +31,7 @@ const Post = () => {
     }
     const userid = async () => {
         // const response = await axios.get('http://localhost:8000/api/user_id/',{
-        const response = await axios.get('https://ourpursuit-7f3fda83b565.herokuapp.com/api/user_id/',{
+        const response = await axios.get('https://our-pursuit-418201.nw.r.appspot.com/api/user_id/',{
           headers: {
             'Authorization': `Bearer ${token}`
           },
@@ -41,7 +41,7 @@ const Post = () => {
     const saved = async () => {
       try {
         // const response = await axios.get(`http://localhost:8000/api/posts/${id}/check-saved/`, {
-        const response = await axios.get(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/posts/${id}/check-saved/`, { 
+        const response = await axios.get(`https://our-pursuit-418201.nw.r.appspot.com/api/posts/${id}/check-saved/`, { 
           headers: {
             'Authorization': `Bearer ${token}`
           },
@@ -60,7 +60,7 @@ const Post = () => {
   const handleCommentSubmit = async () => {
     try {
       // const response = await axios.post(`http://localhost:8000/api/posts/${category}/${id}/create-comment/`, {
-      const response = await axios.post(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/posts/${category}/${id}/create-comment/`, {
+      const response = await axios.post(`https://our-pursuit-418201.nw.r.appspot.com/api/posts/${category}/${id}/create-comment/`, {
         text: commentText
       }, {
         headers: {
@@ -70,7 +70,7 @@ const Post = () => {
 
       if (response){
         // const updatedPostResponse = await axios.get(`http://localhost:8000/api/posts/${category}/${id}`);
-        const updatedPostResponse = await axios.get(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/posts/${category}/${id}`);
+        const updatedPostResponse = await axios.get(`https://our-pursuit-418201.nw.r.appspot.com/api/posts/${category}/${id}`);
         setPostData(updatedPostResponse.data);
         setCommentText('');
       }
@@ -86,7 +86,7 @@ const Post = () => {
   const handleSavePost = async () => {
     try {
       // const response = await axios.post(`http://localhost:8000/api/posts/${id}/save-post/`, null, {
-      const response = await axios.post(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/posts/${id}/save-post/`, null, {
+      const response = await axios.post(`https://our-pursuit-418201.nw.r.appspot.com/api/posts/${id}/save-post/`, null, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

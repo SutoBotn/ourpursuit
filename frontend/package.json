@@ -45,7 +45,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://ourpursuit-7f3fda83b565.herokuapp.com",
+  "proxy": "https://our-pursuit-418201.nw.r.appspot.com",
   "devDependencies": {
     "tailwind-scrollbar": "^3.1.0"
   }
