@@ -21,7 +21,8 @@ const SignupForm = ({ updateToken }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/signup/', formData);
+      // const response = await axios.post('http://localhost:8000/api/signup/', formData);
+      const response = await axios.post('https://ourpursuit-7f3fda83b565.herokuapp.com/api/signup/', formData);
       if (response.data.isAuthenticated) {
         const { refresh, access } = response.data;
         sessionStorage.setItem('refresh', refresh);

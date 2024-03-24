@@ -17,7 +17,8 @@ function Home() {
   useEffect(() => {
     const fetchRecentPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/recent-posts/');
+        // const response = await axios.get('http://localhost:8000/api/recent-posts/');
+        const response = await axios.get('https://ourpursuit-7f3fda83b565.herokuapp.com/api/recent-posts/');
         setRecentPosts(response.data);
       } catch (error) {
         console.error('Error fetching recent posts:', error);
@@ -26,7 +27,8 @@ function Home() {
 
     const fetchPopularPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/popular-posts/');
+        // const response = await axios.get('http://localhost:8000/api/popular-posts/');
+        const response = await axios.get('https://ourpursuit-7f3fda83b565.herokuapp.com/api/popular-posts/');
         setPopularPosts(response.data);
       } catch (error) {
         console.error('Error fetching recent posts:', error);

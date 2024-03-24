@@ -20,7 +20,8 @@ const CategoryPage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/posts/${category}/`)
+        //const response = await axios.get(`http://localhost:8000/api/posts/${category}/`)
+        const response = await axios.get(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/posts/${category}/`)
         setPosts(response.data);
         setFilteredPosts(response.data);
       } catch (error) {

@@ -23,14 +23,16 @@ const AskShare = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/get-categories');
+        //const response = await axios.get('http://localhost:8000/api/get-categories');
+      const response = await axios.get('https://ourpursuit-7f3fda83b565.herokuapp.com/api/get-categories');
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
       }
     };
     const userid = async () => {
-      const response = await axios.get('http://localhost:8000/api/user_id/',{
+      //const response = await axios.get('http://localhost:8000/api/user_id/',{
+      const response = await axios.get('https://ourpursuit-7f3fda83b565.herokuapp.com/api/user_id/',{
         headers: {
           'Authorization': `Bearer ${token}`
         },
@@ -82,7 +84,8 @@ const AskShare = () => {
       let response;
       if (editPost) {
         // Editing existing post
-        response = await axios.post(`http://localhost:8000/api/edit-post/${editPost.id}/`, formData, {
+        //response = await axios.post(`http://localhost:8000/api/edit-post/${editPost.id}/`, formData, {
+        response = await axios.post(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/edit-post/${editPost.id}/`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`
@@ -90,7 +93,8 @@ const AskShare = () => {
         });
       } else {
         // Creating new post
-        response = await axios.post('http://localhost:8000/api/create-post/', formData, {
+        // response = await axios.post('http://localhost:8000/api/create-post/', formData, {
+        response = await axios.post('https://ourpursuit-7f3fda83b565.herokuapp.com/api/create-post/', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`

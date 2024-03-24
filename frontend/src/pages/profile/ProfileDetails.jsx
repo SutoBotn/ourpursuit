@@ -250,7 +250,8 @@ function ProfileDetails({ updateToken }) {
     const get_details = async () => {
       try {
         const token = sessionStorage.getItem('access');
-        const response = await axios.get('http://localhost:8000/api/profile/', {
+        // const response = await axios.get('http://localhost:8000/api/profile/', {
+        const response = await axios.get('https://ourpursuit-7f3fda83b565.herokuapp.com/api/profile/', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -317,7 +318,8 @@ function ProfileDetails({ updateToken }) {
 
     try {
       const token = sessionStorage.getItem('access');
-      const response = await axios.post('http://localhost:8000/api/update-profile/', formData, {
+      // const response = await axios.post('http://localhost:8000/api/update-profile/', formData, {
+      const response = await axios.post('https://ourpursuit-7f3fda83b565.herokuapp.com/api/update-profile/', formData, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -340,7 +342,8 @@ function ProfileDetails({ updateToken }) {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/api/logout/');
+      // const response = await axios.post('http://localhost:8000/api/logout/');
+      const response = await axios.post('https://ourpursuit-7f3fda83b565.herokuapp.com/api/logout/');
       if (response.data.logout) {
         sessionStorage.removeItem('access');
         sessionStorage.removeItem('refresh');

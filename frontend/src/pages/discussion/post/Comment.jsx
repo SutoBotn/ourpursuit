@@ -16,7 +16,8 @@ const Comment = ({ comment, user, setPostData, postData }) => {
 
     const handleSave = async () => {
         try {
-            const response = await axios.post(`http://localhost:8000/api/posts/${comment.post_id}/${comment.id}/update-comment/`, { editedText }, { 
+            // const response = await axios.post(`http://localhost:8000/api/posts/${comment.post_id}/${comment.id}/update-comment/`, { editedText }, {
+            const response = await axios.post(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/posts/${comment.post_id}/${comment.id}/update-comment/`, { editedText }, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -40,7 +41,8 @@ const Comment = ({ comment, user, setPostData, postData }) => {
 
     const handleDelete = async () => {
         try {
-            const response = await axios.delete(`http://localhost:8000/api/posts/${comment.post_id}/${comment.id}/delete-comment/`,{
+            // const response = await axios.delete(`http://localhost:8000/api/posts/${comment.post_id}/${comment.id}/delete-comment/`,{
+            const response = await axios.delete(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/posts/${comment.post_id}/${comment.id}/delete-comment/`,{
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },

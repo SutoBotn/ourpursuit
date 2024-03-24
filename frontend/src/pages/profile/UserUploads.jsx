@@ -16,7 +16,8 @@ const UserUploads = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/user-posts/`, {
+        // const response = await axios.get(`http://localhost:8000/api/user-posts/`, {
+        const response = await axios.get(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/user-posts/`, {  
           headers: {
             'Authorization':  `Bearer ${token}`
           }
@@ -31,14 +32,16 @@ const UserUploads = () => {
   }, [token]);
 
   const handleDelete = async (postId) => {
-    const response = await axios.get(`http://localhost:8000/api/delete-post/${postId}/`,{
+    // const response = await axios.get(`http://localhost:8000/api/delete-post/${postId}/`,{
+    const response = await axios.get(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/delete-post/${postId}/`,{
       headers: {
         'Authorization': `Bearer ${token}`
       },
     })
     if (response) {
         try {
-          const response = await axios.get(`http://localhost:8000/api/user-posts/`, {
+          // const response = await axios.get(`http://localhost:8000/api/user-posts/`, {
+          const response = await axios.get(`https://ourpursuit-7f3fda83b565.herokuapp.com/api/user-posts/`, {
             headers: {
               'Authorization':  `Bearer ${token}`
             }

@@ -163,7 +163,8 @@ def update_profile(request):
 
 def get_categories(request):
     if request.method == 'GET':
-        base_icon_url = "http://localhost:8000" + settings.MEDIA_URL
+        # base_icon_url = "http://localhost:8000" + settings.MEDIA_URL
+        base_icon_url = "https://ourpursuit-7f3fda83b565.herokuapp.com" + settings.MEDIA_URL
         categories = Category.objects.all().values('id', 'name', 'icon')
         categories_data = []
         for category in categories:

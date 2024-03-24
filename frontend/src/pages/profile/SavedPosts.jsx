@@ -19,7 +19,8 @@ const SavedPosts = () => {
   useEffect(() => {
     const fetchSavedPosts = async () => {
         try {
-          const response = await axios.get('http://localhost:8000/api/saved-posts/', {
+        //   const response = await axios.get('http://localhost:8000/api/saved-posts/', {
+        const response = await axios.get('https://ourpursuit-7f3fda83b565.herokuapp.com/api/saved-posts/', {
             headers: {
                 'Authorization': `Bearer ${token}`
               },

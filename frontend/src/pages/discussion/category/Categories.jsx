@@ -11,7 +11,8 @@ const CategoriesPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/get-categories/');
+        // const response = await axios.get('http://localhost:8000/api/get-categories/');
+        const response = await axios.get('https://ourpursuit-7f3fda83b565.herokuapp.com/api/get-categories/');
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error)
