@@ -2,3 +2,6 @@ steps:
   - name: "gcr.io/cloud-builders/gcloud"
     args: ["app", "deploy", "ourpursuit/"]
     timeout: "1600s"  # Adjust the timeout as needed
+  
+options:
+  logsBucket: ourpursuit
