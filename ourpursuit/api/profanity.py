@@ -106,6 +106,9 @@ from sklearn.metrics import accuracy_score, classification_report
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 import pickle
+import nltk
+nltk.download('stopwords')
+
 
 stop_words = set(stopwords.words('english'))
 stemmer = PorterStemmer()
