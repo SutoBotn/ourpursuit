@@ -4,4 +4,4 @@ steps:
     timeout: "1600s"  # Adjust the timeout as needed
   
 options:
-  logsBucket: ourpursuit
+  logStreamingOption: LEGACY
