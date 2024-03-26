@@ -164,7 +164,11 @@ def update_profile(request):
 def get_categories(request):
     if request.method == 'GET':
         # base_icon_url = "http://localhost:8000" + settings.MEDIA_URL
-        base_icon_url = "https://our-pursuit-418201.nw.r.appspot.com" + settings.MEDIA_URL
+        # Get the base URL of the current request
+        base_url = request.build_absolute_uri('/')[:-1]  # Remove the trailing slash
+
+        # Construct the base_icon_url using the base URL and MEDIA_URL from settings
+        base_icon_url = base_url + settings.MEDIA_URL        
         categories = Category.objects.all().values('id', 'name', 'icon')
         categories_data = []
         for category in categories:
@@ -457,7 +461,8 @@ def create_comment(request, category_name, post_id):
                     'post_title': post.title,
                     'reply_author': comment.author.username,
                     'reply_content': comment.text,
-                    'link_to_post': f'http://localhost:3000/discussion/{post.category.name}/{post.id}/',  # Modified URL with post.category and post.id
+                    # 'link_to_post': f'http://localhost:3000/discussion/{post.category.name}/{post.id}/',  # Modified URL with post.category and post.id
+                    'link_to_post': f'http://ourpursuit.netlify.app/discussion/{post.category.name}/{post.id}/',  # Modified URL with post.category and post.id
                 })
                 send_mail(
                     subject=post.title + ' received a comment!',

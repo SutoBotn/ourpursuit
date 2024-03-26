@@ -22,7 +22,7 @@ const SignupForm = ({ updateToken }) => {
     e.preventDefault();
     try {
       // const response = await axios.post('http://localhost:8000/api/signup/', formData);
-      const response = await axios.post('https://our-pursuit-418201.nw.r.appspot.com/api/signup/', formData);
+      const response = await axios.post('/api/signup/', formData);
       if (response.data.isAuthenticated) {
         const { refresh, access } = response.data;
         sessionStorage.setItem('refresh', refresh);

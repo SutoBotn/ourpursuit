@@ -20,7 +20,7 @@ const SavedPosts = () => {
     const fetchSavedPosts = async () => {
         try {
         //   const response = await axios.get('http://localhost:8000/api/saved-posts/', {
-        const response = await axios.get('https://our-pursuit-418201.nw.r.appspot.com/api/saved-posts/', {
+        const response = await axios.get('/api/saved-posts/', {
             headers: {
                 'Authorization': `Bearer ${token}`
               },

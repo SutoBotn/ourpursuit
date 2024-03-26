@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+from . import database
+
 
 from pathlib import Path
 
@@ -115,13 +117,29 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'our-pursuit', 
+#         'USER': 'root', 
+#         'PASSWORD': 'Password123!', 
+#         'HOST': '/cloudsql/our-pursuit-418201:europe-west2:our-pursuit',  
+#         'OPTIONS': {
+#             'sql_mode': 'traditional',
+#         },
+#     }
+# }
+
+DATABASES = {
+    'default': database.config()
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

@@ -21,7 +21,7 @@ const CategoryPage = () => {
     const fetchPosts = async () => {
       try {
         //const response = await axios.get(`http://localhost:8000/api/posts/${category}/`)
-        const response = await axios.get(`https://our-pursuit-418201.nw.r.appspot.com/api/posts/${category}/`)
+        const response = await axios.get(`/api/posts/${category}/`)
         setPosts(response.data);
         setFilteredPosts(response.data);
       } catch (error) {

@@ -251,7 +251,7 @@ function ProfileDetails({ updateToken }) {
       try {
         const token = sessionStorage.getItem('access');
         // const response = await axios.get('http://localhost:8000/api/profile/', {
-        const response = await axios.get('https://our-pursuit-418201.nw.r.appspot.com/api/profile/', {
+        const response = await axios.get('/api/profile/', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -319,7 +319,7 @@ function ProfileDetails({ updateToken }) {
     try {
       const token = sessionStorage.getItem('access');
       // const response = await axios.post('http://localhost:8000/api/update-profile/', formData, {
-      const response = await axios.post('https://our-pursuit-418201.nw.r.appspot.com/api/update-profile/', formData, {
+      const response = await axios.post('/api/update-profile/', formData, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -343,7 +343,7 @@ function ProfileDetails({ updateToken }) {
   const handleLogout = async () => {
     try {
       // const response = await axios.post('http://localhost:8000/api/logout/');
-      const response = await axios.post('https://our-pursuit-418201.nw.r.appspot.com/api/logout/');
+      const response = await axios.post('/api/logout/');
       if (response.data.logout) {
         sessionStorage.removeItem('access');
         sessionStorage.removeItem('refresh');

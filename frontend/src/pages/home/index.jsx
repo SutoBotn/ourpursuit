@@ -18,7 +18,7 @@ function Home() {
     const fetchRecentPosts = async () => {
       try {
         // const response = await axios.get('http://localhost:8000/api/recent-posts/');
-        const response = await axios.get('https://our-pursuit-418201.nw.r.appspot.com/api/recent-posts/');
+        const response = await axios.get('/api/recent-posts/');
         setRecentPosts(response.data);
       } catch (error) {
         console.error('Error fetching recent posts:', error);
@@ -28,7 +28,7 @@ function Home() {
     const fetchPopularPosts = async () => {
       try {
         // const response = await axios.get('http://localhost:8000/api/popular-posts/');
-        const response = await axios.get('https://our-pursuit-418201.nw.r.appspot.com/api/popular-posts/');
+        const response = await axios.get('/api/popular-posts/');
         setPopularPosts(response.data);
       } catch (error) {
         console.error('Error fetching recent posts:', error);
