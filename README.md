@@ -16,44 +16,44 @@ Before you can run this project, ensure that you have the following prerequisite
 
 In terminal:
 
-### Create virtual environment
+#### Create virtual environment
 conda create --name ourpursuit python=3.10
 
-### Activate environment
+#### Activate environment
 conda activate ourpursuit
 
-### Navigate into project's saved folder
+#### Navigate into project's saved folder
 cd [foldername]
 
-## Backend Setup
+### Backend Setup
 
-### Navigate to backend folder
+#### Navigate to backend folder
 cd ourpursuit
 
-### Install Django
+#### Install Django
 pip install django
 
-### Install dependencies
+#### Install dependencies
 pip install -r requirements.txt
 
-### Apply migrations
+#### Apply migrations
 python manage.py migrate
 
-### Run the Django development server
+#### Run the Django development server
 python manage.py runserver
 
-## Frontend Setup
+### Frontend Setup
 
 In terminal:
 
-### Navigate to main project folder (if in 'ourpursuit' folder)
+#### Navigate to main project folder (if in 'ourpursuit' folder)
 cd ..
 
-### Navigate to frontend folder
+#### Navigate to frontend folder
 cd frontend
 
-### Install npm dependencies
+#### Install npm dependencies
 npm install
 
-### Run React frontend
+#### Run React frontend
 npm start
