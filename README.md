@@ -7,14 +7,17 @@ Our Pursuit aims to create a global hub website for users, aged 11 to 25, to con
 ## Prerequisites
 Before you can run this project, ensure that you have the following prerequisites installed on your system:
 
-- **Python:** [Download and install Python](https://www.python.org/downloads/). Ensure pip is installed simultaneously.
-- **Node.js:** [Download and install Node.js](https://nodejs.org/en/download/).
-- **Conda** [Download and install MiniConda](https://docs.anaconda.com/free/miniconda/miniconda-install/).
-
+- **Python:**: Download and install Python. Ensure pip is installed simultaneously.
+- **Node.js:**: Download and install Node.js.
+- **Conda**: Download and install MiniConda.
+- **git**: Download and install git
 
 ## Installation
 
 In terminal:
+
+#### Clone repository
+git clone https://github.com/SutoBotn/ourpursuit.git
 
 #### Create virtual environment
 conda create --name ourpursuit python=3.10
