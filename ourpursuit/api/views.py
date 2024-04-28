@@ -1,7 +1,6 @@
 import json
 import os
 import re
-from smtplib import SMTPException
 
 from django.contrib.auth import authenticate, login, logout
 from django.http import BadHeaderError, HttpRequest, HttpResponse, JsonResponse
@@ -10,14 +9,16 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.db.models import Count
 from django.core.mail import send_mail
+from smtplib import SMTPException
+from django.template.loader import render_to_string
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from .forms import SignupForm, LoginForm, PostForm
 from .models import Category, CustomUser, Profile, Post, Comment
-
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from .profanity import load_model_and_vectorizer, predict_hate_speech
 trained_model, vectorizer = load_model_and_vectorizer()
@@ -25,6 +26,7 @@ trained_model, vectorizer = load_model_and_vectorizer()
 @csrf_exempt
 @api_view(['POST'])
 def login_view(request):
+    """ This function is to check the credentials against the database to authenticate a user """
     if request.method == 'POST':
         form = LoginForm(json.loads(request.body))
 
@@ -35,6 +37,8 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
+
+                # Create a token
                 refresh = RefreshToken.for_user(user)
                 return JsonResponse({
                     'refresh': str(refresh),
@@ -51,6 +55,7 @@ def login_view(request):
 @csrf_exempt
 @api_view(['POST'])
 def signup_view(request):
+    """ This function allows users to create a new profile so they can access other features within the website """
     if request.method == 'POST':
         form = SignupForm(json.loads(request.body))
 
@@ -72,9 +77,11 @@ def signup_view(request):
             new_user.set_password(password)
             new_user.save()
 
+            # Create a profile for the new user
             new_profile = Profile(user_acc=new_user)
             new_profile.save()
 
+            # Automatically log them in
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
@@ -89,9 +96,11 @@ def signup_view(request):
             
         else:
             return JsonResponse({'error': 'Form is not valid', 'isAuthenticated': False}, status=401)
+    
 
 @csrf_exempt
 def logout_view(request: HttpRequest) -> HttpResponse:
+    """ User is logged out of their account """
     if request.method == 'POST':
         logout(request)
         return JsonResponse({'logout': True})
@@ -100,6 +109,7 @@ def logout_view(request: HttpRequest) -> HttpResponse:
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_profile(request):
+    """ Return user's details for profile page """
     user = request.user
     user_object = CustomUser.objects.get(id=request.user.id)
     user_profile = Profile.objects.get(user_acc=user_object.id)
@@ -124,6 +134,7 @@ def get_user_id(request):
 @csrf_exempt
 @permission_classes([IsAuthenticated])
 def update_profile(request):
+    """ Allows users to change their profile details """
     if request.method == 'POST':
         user = request.user
         if user.is_authenticated:
@@ -132,11 +143,13 @@ def update_profile(request):
             newPassword = request.POST.get('newPassword')
             profile_image = request.FILES.get('profile_image')
             if username:
+                # Checks if username already exists in the database
                 if CustomUser.objects.filter(username=username).exists() == False:
                     user.username = username
                 else:
                     return JsonResponse({'error': 'Username already exists'}, status=400)
             if currentPassword:
+                # checks if the password they inputted is correct
                 if user.check_password(currentPassword):
                     if newPassword and len(newPassword) > 8 and re.search(r"[A-Z]", newPassword) and re.search(r"[a-z]", newPassword) and re.search(r"[0-9]", newPassword) and re.search(r"[!@#$%^&*(),.?\":{}|<>]", newPassword):
                         user.set_password(newPassword)
@@ -162,6 +175,7 @@ def update_profile(request):
         return JsonResponse({'error': 'Empty request body'}, status=400)
 
 def get_categories(request):
+    """ Called to display all the categories and the icons which were added to the table manually """
     if request.method == 'GET':
         base_icon_url = "http://localhost:8000" + settings.MEDIA_URL
         categories = Category.objects.all().values('id', 'name', 'icon')
@@ -178,6 +192,7 @@ def get_categories(request):
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 def get_recent_posts(request):
+    """ Returns the 5 latest posts """
     if request.method == 'GET':
         recent_posts = Post.objects.all().order_by('-created_at')[:5]
         serialized_posts = []
@@ -198,6 +213,7 @@ def get_recent_posts(request):
         return JsonResponse(serialized_posts, safe=False)
     
 def get_popular_posts(request):
+    """ Returns the posts with the most comments and saves """
     most_interacted_posts = Post.objects.annotate(num_comments=Count('comments'), num_saves=Count('saved_by')).order_by('-num_comments', '-num_saves')[:5]
     serialized_posts = []
 
@@ -217,6 +233,7 @@ def get_popular_posts(request):
     return JsonResponse(serialized_posts, safe=False)
 
 def get_posts_by_category(request, category_name):
+    """ Returns all posts that are under category_name """
     if request.method == 'GET':
         try:
             category = Category.objects.get(name=category_name)
@@ -245,6 +262,7 @@ def get_posts_by_category(request, category_name):
         return JsonResponse({'error': 'Method not allowed'}, status=405)
     
 def get_post(request, category_name, post_id):
+    """ Returns the post details which corresponds to category_name and post_id """
     if request.method == 'GET':
         try:
             category = Category.objects.get(name=category_name)
@@ -274,6 +292,7 @@ def get_post(request, category_name, post_id):
 @csrf_exempt
 @permission_classes([IsAuthenticated])
 def get_user_posts(request):
+    """ Returns all of the user's posts """
     if request.method == 'GET':
         posts = Post.objects.filter(writer=request.user)
         serialized_posts = []
@@ -298,6 +317,7 @@ def get_user_posts(request):
 @csrf_exempt
 @permission_classes([IsAuthenticated])
 def create_post(request):
+    """ Allows user to upload a post after checking if the form is valid and if it contains profane language """
     if request.method == 'POST':
         user = request.user
         if user.is_authenticated:
@@ -311,11 +331,6 @@ def create_post(request):
                     return JsonResponse({'error': 'Post contains offensive language'}, status=400)
                 else:
                     print('no profanity')
-
-                # if contains_profanity(post_text, trained_model, vectorizer):
-                #     return JsonResponse({'error': 'Post contains profanity'}, status=400)
-                # else:
-                #     print('no profanity')
                 
                 new_post = Post(
                     writer=user,
@@ -344,6 +359,7 @@ def create_post(request):
 @csrf_exempt
 @permission_classes([IsAuthenticated])
 def edit_post(request, post_id):
+    """ If needed, user can modify their posts """
     if request.method == 'POST':
         user = request.user
         if user.is_authenticated:
@@ -391,11 +407,9 @@ def edit_post(request, post_id):
                         else:
                             return JsonResponse({'error': 'Invalid post type instance'}, status=400)
                     else:
-                        # Handle the case where the category_instance is not an instance of Category
                         return JsonResponse({'error': 'Invalid category instance'}, status=400)
                 else:
                     return JsonResponse({'errors': form.errors}, status=400)
-                    # return JsonResponse({'error': 'All fields need to be filled'}, status=400)
             else:
                 return JsonResponse({'error': 'You can only edit your own posts'}, status=403)
         else:
@@ -407,6 +421,7 @@ def edit_post(request, post_id):
 @csrf_exempt
 @permission_classes([IsAuthenticated])    
 def delete_post(request, post_id):
+    """ When viewing their uploads, users can delete any posts """
     try:
         post = Post.objects.get(id=post_id)
         if post.writer == request.user:
@@ -422,17 +437,17 @@ def delete_post(request, post_id):
 @csrf_exempt
 @api_view(['GET'])
 def get_comments(request, category_name, post_id):
+    """ Return all comments under a post """
     category = Category.objects.get(name=category_name)
     post = Post.objects.get(id=post_id, category=category)
     comments = post.comments.all()
     comments_list = list(comments.values())
     return JsonResponse(comments_list, safe=False)
 
-from django.template.loader import render_to_string
-
 @csrf_exempt
 @permission_classes([IsAuthenticated])
 def create_comment(request, category_name, post_id):
+    """ Comments can be made under any posts as long as it isn't profane and sends an email to the author """
     if request.method == 'POST':
         user = request.user
         if user.is_authenticated:
@@ -446,10 +461,6 @@ def create_comment(request, category_name, post_id):
                 return JsonResponse({'error': 'Oops! Your comment includes offensive language. Please rephrase and submit '}, status=400)
             else:
                 print('no profanity detected')
-            # if contains_profanity(data['text'], trained_model, vectorizer):
-            #     return JsonResponse({'error': 'Comment contains profanity'}, status=400)
-            # else:
-            #     print('no profanity')
 
             comment = Comment.objects.create(
                 post=post,
@@ -457,20 +468,24 @@ def create_comment(request, category_name, post_id):
                 text=data['text']
             )
             try:
-                html_content = render_to_string('email/reply_notification.html', {
-                    'username': post.writer.username,
-                    'post_title': post.title,
-                    'reply_author': comment.author.username,
-                    'reply_content': comment.text,
-                    'link_to_post': f'http://localhost:3000/discussion/{post.category.name}/{post.id}/',  # Modified URL with post.category and post.id
-                })
-                send_mail(
-                    subject=post.title + ' received a comment!',
-                    message='You have received a new comment on your post. Check it out!',
-                    html_message=html_content,
-                    from_email='our.pursuit.web@gmail.com',
-                    recipient_list=[post.writer.email]
-                )
+                # Checks if the post author is replying to their own post
+                if (comment.author.username != post.writer.username):
+                    html_content = render_to_string('email/reply_notification.html', {
+                        'username': post.writer.username,
+                        'post_title': post.title,
+                        'reply_author': comment.author.username,
+                        'reply_content': comment.text,
+                        'link_to_post': f'http://localhost:3000/discussion/{post.category.name}/{post.id}/',  # Link to post
+                    })
+                    send_mail(
+                        subject=post.title + ' received a comment!',
+                        message='You have received a new comment on your post. Check it out!',
+                        html_message=html_content,
+                        from_email='our.pursuit.web@gmail.com',
+                        recipient_list=[post.writer.email]
+                    )
+                else:
+                    return JsonResponse({'comment_id': comment.id}, status=201)
             except BadHeaderError:
                 # Handle BadHeaderError (invalid header in email)
                 return JsonResponse({'error': 'Invalid email header'}, status=500)
@@ -488,6 +503,7 @@ def create_comment(request, category_name, post_id):
 @csrf_exempt
 @permission_classes([IsAuthenticated])
 def update_comment(request, post_id, comment_id):
+    """ If needed, user can modify their comments """
     if request.method == "POST":
         comment = Comment.objects.get(id=comment_id, post_id=post_id)
         data = json.loads(request.body)
@@ -498,15 +514,11 @@ def update_comment(request, post_id, comment_id):
             return JsonResponse({'error': 'You can only edit your own comments.'}, status=403)
         
         if predict_hate_speech(edited_text, trained_model, vectorizer) == 0:
-            return JsonResponse({'error': 'Post contains hate speech'}, status=400)
+            return JsonResponse({'error': 'Oops! Your comment has been detected to include hate speech, this is not permitted '}, status=400)
         elif predict_hate_speech(edited_text, trained_model, vectorizer) == 1:
-            return JsonResponse({'error': 'Post contains offensive language'}, status=400)
+            return JsonResponse({'error': 'Oops! Your comment includes offensive language. Please rephrase and submit '}, status=400)
         else:
             print('no profanity detected')
-        # if contains_profanity(data['text'], trained_model, vectorizer):
-        #     return JsonResponse({'error': 'Comment contains profanity'}, status=400)
-        # else:
-        #     print('no profanity')
 
         comment.text = edited_text
         comment.save()
@@ -516,9 +528,9 @@ def update_comment(request, post_id, comment_id):
 @csrf_exempt
 @permission_classes([IsAuthenticated])
 def delete_comment(request, post_id, comment_id):
+    """ Allows users to delete their comments on other's posts"""
     if request.method == "DELETE":
         comment = Comment.objects.get(id=comment_id, post_id=post_id)
-        print('user', request.user, ' comment', comment.author)
         if request.user != comment.author:
             return JsonResponse({'error': 'You can only delete your own comments.'}, status=404)
         comment.delete()
@@ -527,6 +539,7 @@ def delete_comment(request, post_id, comment_id):
 @csrf_exempt
 @permission_classes([IsAuthenticated])
 def save_post(request, post_id):
+    """ Users can favourite posts that they want to come  back to """
     if request.method == 'POST':
         try:
             post = Post.objects.get(pk=post_id)
@@ -542,6 +555,7 @@ def save_post(request, post_id):
 
 @csrf_exempt
 def check_saved_post(request, post_id):
+    """ Returns whether the user has saved the post or not """
     user = request.user
     if user.is_authenticated:
         user_id = user.id
@@ -555,6 +569,7 @@ def check_saved_post(request, post_id):
 @csrf_exempt
 @permission_classes([IsAuthenticated])
 def get_user_saved_posts(request):
+    """ Returns all the posts that the user saved """
     user = request.user
     saved_posts = user.saved_posts.all()
 

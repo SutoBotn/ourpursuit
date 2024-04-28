@@ -104,10 +104,6 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
-
-# def upload_comment(instance, filename):
-#     return 'comments/{filename}'.format(filename=filename)
-
 class Comment(models.Model):
     post = models.ForeignKey(
         to=Post,
@@ -121,7 +117,6 @@ class Comment(models.Model):
     )
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    # image = models.ImageField(upload_to=upload_comment, blank=True, null=True)
 
     def __str__(self):
         return f'{self.author.user_acc.username}: {self.text}'

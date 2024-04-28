@@ -52,6 +52,7 @@ const UserUploads = () => {
 
   const handleEdit = (post) => {
     navigate("/askshare", { state: { editPost: post } });
+    console.log("edit")
   };
 
   const renderPosts = (posts) => {
@@ -60,7 +61,7 @@ const UserUploads = () => {
         key={post.id} 
         className={`h-48 p-4 cursor-pointer bg-transparent shadow-lg rounded-lg ${post.type === 'Advice' ? 'border-green border-4' : post.type === 'Question' ? 'border-mustard border-4' : ''} flex flex-col justify-between`}
       >
-        <div className='flex flex-col space-y-3'>
+        <div className='flex flex-col space-y-3' onClick={() => navigate(`/discussion/${post.category}/${post.id}`)}>
           <p className="text-brown text-lg font-semibold line-clamp-2">{post.title}</p>
           <p className="text-sm text-center">{post.category}</p>
           <div className="flex gap-6 items-center text-sm mt-auto justify-center">

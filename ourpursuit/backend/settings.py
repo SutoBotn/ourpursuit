@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from datetime import timedelta
 import os
 
 from pathlib import Path
@@ -68,6 +69,13 @@ MIDDLEWARE = [
     'api.middleware.JWTAuthenticationMiddleware',
 ]
 
+SIMPLE_JWT = {
+     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+     'ROTATE_REFRESH_TOKENS': True,
+     'BLACKLIST_AFTER_ROTATION': True
+}
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:8000',
@@ -84,7 +92,6 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # 30 days in seconds
-
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -116,7 +123,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

@@ -17,14 +17,36 @@ const App = () => {
   const [token, updateToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
+  // useEffect(() => {
+  //   const storedToken = sessionStorage.getItem('access');
+  //   if (storedToken) {
+  //     setIsAuthenticated(true);
+  //   } else {
+  //     setIsAuthenticated(false)
+  //   }
+  // }, [token]);
   useEffect(() => {
     const storedToken = sessionStorage.getItem('access');
     if (storedToken) {
-      setIsAuthenticated(true);
+      // Decode the JWT token to get expiration time
+      const decodedToken = JSON.parse(atob(storedToken.split('.')[1]));
+      const tokenExpirationTime = decodedToken.exp * 1000; // Convert to milliseconds
+      const currentTime = new Date().getTime();
+      
+      // Check if token has expired
+      if (currentTime > tokenExpirationTime) {
+        // Token has expired
+        sessionStorage.removeItem('access'); // Remove expired token
+        setIsAuthenticated(false);
+        alert("Your session has expired. Please log in again.");
+      } else {
+        // Token is still valid
+        setIsAuthenticated(true);
+      }
     } else {
-      setIsAuthenticated(false)
+      setIsAuthenticated(false);
     }
-  }, [token]);
+  });
 
   const router = createBrowserRouter([
     {

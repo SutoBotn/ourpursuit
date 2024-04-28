@@ -1,100 +1,3 @@
-# import pandas as pd
-# import json
-# from sklearn.model_selection import train_test_split
-# from sklearn.feature_extraction.text import TfidfVectorizer
-# from sklearn.svm import SVC
-# from sklearn.metrics import accuracy_score, classification_report
-# import nltk
-# from nltk.stem import PorterStemmer
-# from nltk.corpus import stopwords
-
-
-# nltk.download('stopwords')
-
-# stop_words = set(stopwords.words('english'))
-# stemmer = PorterStemmer()
-
-# # Load profanity dataset
-# with open('static/assets/profanity_words.json') as f:
-#     profanity_data = json.load(f)
-# profanity_words = set(profanity_data)
-
-# # Initialize TF-IDF Vectorizer
-# tfidf_vectorizer = TfidfVectorizer(max_features=5000) 
-
-# # Function to preprocess text and assign weights to profane words
-# def preprocess_text(text):
-#     words = [stemmer.stem(word) for word in text.split() if not word.lower() in stop_words]
-#     weighted_words = []
-#     for word in words:
-#         if word.lower() in profanity_words:
-#             weighted_words.extend([word] * 2)  # Assigning weight 2 to profane words
-#         else:
-#             weighted_words.append(word)
-#     return ' '.join(weighted_words)
-
-# def evaluate_model(df, model):
-#     # Preprocess the text
-#     df['processed_text'] = df['tweet'].apply(preprocess_text)
-
-#     # Split the data into train and test sets
-#     X_train, X_test, y_train, y_test = train_test_split(df['processed_text'], df['class'], test_size=0.2, random_state=42)
-
-#     # Vectorize the text data
-#     X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)
-#     X_test_tfidf = tfidf_vectorizer.transform(X_test)
-
-#     # Train the model
-#     model.fit(X_train_tfidf, y_train)
-
-#     # Predict with the model
-#     y_pred = model.predict(X_test_tfidf)
-
-#     # Evaluate the model
-#     accuracy = accuracy_score(y_test, y_pred)
-#     report = classification_report(y_test, y_pred)
-
-#     return accuracy, report
-
-# def predict_hate_speech(sentence, model):
-#     # Preprocess the input sentence
-#     processed_sentence = preprocess_text(sentence)
-
-#     # Vectorize the input sentence
-#     X_sentence_tfidf = tfidf_vectorizer.transform([processed_sentence])
-
-#     # Predict with the model
-#     prediction = model.predict(X_sentence_tfidf)
-
-#     return prediction[0]  # Return the predicted class label
-
-# # Load dataset
-# df = pd.read_csv('static/assets/hate_speech_dataset.csv')
-
-# # Train Support Vector Machine Classifier
-# svm_model = SVC()
-# svm_accuracy, svm_report = evaluate_model(df, svm_model)
-# print("\nSupport Vector Machine Classifier:")
-# print(f"Accuracy: {svm_accuracy:.2f}")
-# print(f"Classification Report:\n{svm_report}")
-
-# test_sentences = [
-#     "This is a harmless sentence.",
-#     "Fucking bitch rat ass hoe.",
-#     "what the actual fck",
-#     "omgggg b1tch no way",
-#     "go kill yourself",
-#     "what if we all just went extinct in two days?",
-#     "Did you know that his fucking dad was the pope?",
-#     "Please meet my chinky friend and my faggot daughter."
-# ]
-
-# for sentence in test_sentences:
-#     print(f"Sentence: {sentence}")
-#     print("Prediction with Support Vector Machine Classifier:", predict_hate_speech(sentence, svm_model))
-#     print()
-
-
 import pandas as pd
 import json
 from sklearn.model_selection import train_test_split
@@ -106,43 +9,48 @@ from sklearn.metrics import accuracy_score, classification_report
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 import pickle
+from imblearn.over_sampling import RandomOverSampler
 
 stop_words = set(stopwords.words('english'))
 stemmer = PorterStemmer()
 
 def load_profanity_words():
+    """ Load profanity words dataset"""
     with open('api/static/assets/profanity_words.json') as f:
         profanity_data = json.load(f)
     return set(profanity_data)
 
 def load_dataset():
+    """ Load Hate Speech and Offensive Language Twitter Dataset """
     df = pd.read_csv('static/assets/hate_speech_dataset.csv')
     return df
 
-# Function to preprocess text
 def preprocess_text(text, profanity_words):
-    # Converts word to lowercase, removes stopwords and reducing words to their base form
+    """ Converts word to lowercase, removes stopwords and reducing words to their base form, adding weight to profanity words """
     words = [stemmer.stem(word) for word in text.split() if not word.lower() in stop_words]
     weighted_words = []
     for word in words:
         if word.lower() in profanity_words:
-            weighted_words.extend([word] * 2)  # Assigning weight 2 to profane words
+            weighted_words.extend([word] * 2)
         else:
             weighted_words.append(word)
     return ' '.join(weighted_words)
 
 def evaluate_model(df, model, tfidf_vectorizer):
-    profanity_words = load_profanity_words()
-
+    """ Train and evaluate the model """
     # Preprocess the text
     df['processed_text'] = df['tweet'].apply(lambda x: preprocess_text(x, profanity_words))
 
-    # Split the data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(df['processed_text'], df['class'], test_size=0.2, random_state=42)
+    # Balance the classes using oversampling because classes have mixed samples
+    ros = RandomOverSampler(random_state=42)
+    X_resampled, y_resampled = ros.fit_resample(df['processed_text'].values.reshape(-1, 1), df['class'])
+
+    # Split the resampled data into train and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42)
 
     # Vectorize the text data
-    X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)
-    X_test_tfidf = tfidf_vectorizer.transform(X_test)
+    X_train_tfidf = tfidf_vectorizer.fit_transform(X_train.ravel())
+    X_test_tfidf = tfidf_vectorizer.transform(X_test.ravel())
 
     # Train the model
     model.fit(X_train_tfidf, y_train)
@@ -157,8 +65,10 @@ def evaluate_model(df, model, tfidf_vectorizer):
     return accuracy, report
 
 def predict_hate_speech(sentence, model, tfidf_vectorizer):
+    """ Used in views.py for predicting whether user input should be filtered """
     profanity_words = load_profanity_words()
 
+    # Check if any profane word is in the text and classify as offensive
     if any(word.lower() in profanity_words for word in sentence.split()):
         return 1
     
@@ -209,16 +119,13 @@ if __name__ == "__main__":
     
     model = VotingClassifier(estimators=[('lr', clf1), ('svm', clf2)], voting='soft')
     accuracy, report = evaluate_model(df, model, tfidf_vectorizer)
-    print("\nSupport Vector Machine Classifier:")
     print(f"Accuracy: {accuracy:.2f}")
     print(f"Classification Report:\n{report}")
 
-    # Save model and vectorizer
     save_model_and_vectorizer(model, tfidf_vectorizer)
-
-    # Load model and vectorizer
     loaded_model, loaded_vectorizer = load_model_and_vectorizer()
 
+    # Offensive content to test the model
     test_sentences = [
         "This is a harmless sentence.",
         "Fucking bitch rat ass hoe.",
@@ -230,12 +137,10 @@ if __name__ == "__main__":
         "what if we all just went extinct in two days?",
         "Did you know that his fucking dad was the pope?",
         "Please meet my chinky friend.",
-        "omg omg",
-        "Hey willies! help me with my skin, its gone BAD",
         "omgggggggg"
     ]
 
     for sentence in test_sentences:
         print(f"Sentence: {sentence}")
-        print("Prediction with Support Vector Machine Classifier:", predict_hate_speech(sentence, loaded_model, loaded_vectorizer))
+        print("Prediction:", predict_hate_speech(sentence, loaded_model, loaded_vectorizer))
         print()

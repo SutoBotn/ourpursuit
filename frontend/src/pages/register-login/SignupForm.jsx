@@ -57,6 +57,7 @@ const SignupForm = ({ updateToken }) => {
                     className={`block w-full py-2 px-4 bg-transparent border-4 border-green text-green rounded-lg focus:outline-none focus:border-mustard ${formData.error && formData.error.includes('Email') && 'border-error'}`}
                     value={formData.email}
                     onChange={handleChange}
+                    required
                   />
                   {formData.error && formData.error.includes('Email') && (
                     <div className="absolute right-3 top-2 text-error">
@@ -76,6 +77,7 @@ const SignupForm = ({ updateToken }) => {
                     className={`block w-full py-2 px-4 bg-transparent border-4 border-green text-green rounded-lg focus:outline-none focus:border-mustard ${formData.error && formData.error.includes('Username') && 'border-error'}`}
                     value={formData.username}
                     onChange={handleChange}
+                    required
                   />
                   {formData.error && formData.error.includes('Username') && (
                     <div className="absolute right-3 top-2 text-error">
@@ -95,6 +97,7 @@ const SignupForm = ({ updateToken }) => {
                     className={`block w-full py-2 px-4 bg-transparent border-4 border-green text-green rounded-lg focus:outline-none focus:border-mustard ${formData.error && formData.error.includes('Password') && 'border-error'}`}
                     value={formData.password}
                     onChange={handleChange}
+                    required
                   />
                   {formData.error && formData.error.includes('Password') && (
                     <div className="absolute right-3 top-2 text-error">

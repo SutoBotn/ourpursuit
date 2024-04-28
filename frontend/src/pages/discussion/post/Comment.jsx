@@ -61,7 +61,7 @@ const Comment = ({ comment, user, setPostData, postData }) => {
                 <img
                   src={comment.profile_image || ProfileImage}
                   alt="User Profile"
-                  className="w-8 h-8 rounded-full mr-4"
+                  className="w-8 h-8 rounded-full mr-4 object-cover"
                 />
                 <div className='w-full'>
                   <span className="font-bold">{comment.author}</span>

@@ -68,6 +68,7 @@ const Post = () => {
         const updatedPostResponse = await axios.get(`http://localhost:8000/api/posts/${category}/${id}`);
         setPostData(updatedPostResponse.data);
         setCommentText('');
+        console.log(response.data)
       }
     } catch (error) {
       setCommentError(error.response.data.error)
@@ -125,7 +126,7 @@ const Post = () => {
             <img
               src={postData.profile_image || ProfileImage}
               alt="User Profile"
-              className="w-8 h-8 rounded-full mr-4"
+              className="w-8 h-8 rounded-full mr-4 object-cover"
             />
             <span className="font-bold">{postData.writer}</span>
           </div>
